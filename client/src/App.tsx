@@ -20,6 +20,7 @@ import SchoolsTable from "./components/Table/SchoolsTable";
 
 import LearningPath from "./pages/learningPath";
 import School from "./pages/school";
+import User from "./pages/user";
 
 import { Amplify } from 'aws-amplify';
 import { getCurrentUser } from 'aws-amplify/auth';
@@ -118,6 +119,7 @@ export default function App() {
                 {/* <Route path="users/:id" element={<UsersTable />} loader={protectedLoader} /> */}
                 <Route path="learning-paths/:pathId" element={<LearningPath />} loader={protectedLoader} />
                 <Route path="schools/:schoolId" element={<School />} loader={protectedLoader} />
+                <Route path="users/:userId" element={<User />} loader={protectedLoader} />
 
                 <Route path="*" element={<NoMatch />} loader={protectedLoader} />
               </Route>

@@ -41,7 +41,11 @@ const ModulesTable = () => {
           {data?.users?.users?.sort((a, b) => a.first_name.localeCompare(b.first_name))?.map((item: User) => {
             return (
               <TableRow key={item.id}>
-                <TableCell>{item.first_name}</TableCell>
+                <TableCell
+                  onClick={() => navigate(`/usertest`)}
+                  style={{ cursor: "pointer" }}
+                  >{item.first_name}
+                </TableCell>
                 <TableCell>{item.last_name}</TableCell>
                 <TableCell>{item.cognito_id}</TableCell>
                 <TableCell>{item.email}</TableCell>
