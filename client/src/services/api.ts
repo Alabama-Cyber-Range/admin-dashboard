@@ -26,13 +26,15 @@ import {
   createSchool_user_associations,
   createSchool_lab_associations,
   createLearning_path_lab_associations,
+  createLearning_paths,
   deleteSchool_lab_associations,
-  deleteLearning_path_lab_associations
+  deleteLearning_path_lab_associations,
 } from '../graphql/mutations';
 import {
   CreateSchool_user_associationsInput,
   CreateSchool_lab_associationsInput,
   CreateLearning_path_lab_associationsInput,
+  CreateLearning_pathsInput,
   DeleteSchool_lab_associationsInput,
   DeleteLearning_path_lab_associationsInput
 } from '../API';
@@ -515,6 +517,18 @@ export const unassociate_lab_with_learning_path = async (labId: number, learning
 
   await client.graphql({
     query: deleteLearning_path_lab_associations,
+    variables: { input },
+  });
+};
+
+export const add_learning_path = async (name: string, description: string): Promise<void> => {
+  const input: CreateLearning_pathsInput = {
+    name,
+    description,
+  };
+
+  await client.graphql({
+    query: createLearning_paths,
     variables: { input },
   });
 };
