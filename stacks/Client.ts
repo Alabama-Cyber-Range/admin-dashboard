@@ -24,9 +24,6 @@ export function Client({ stack }: StackContext) {
       userPool: {
         selfSignUpEnabled: false,
         standardAttributes: {
-          address: { required: true },
-          gender: { required: true },
-          birthdate: { required: true },
           givenName: { required: true },
           familyName: { required: true },
         },
