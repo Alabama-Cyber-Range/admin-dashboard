@@ -4,7 +4,7 @@ export const baseConfig = {
   projectLink: "https://github.com/Alabama-Cyber-Range",
   docsRepositoryBase: "", // base URL for the docs repository
   titleSuffix: "",
-  search: true,
+  search: false,
   header: true,
   // headerText: "Alabama Cyber Range",
   footer: true,
