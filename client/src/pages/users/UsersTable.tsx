@@ -30,11 +30,10 @@ const UsersTable = () => {
           <TableRow>
             <TableCell as="th">First Name</TableCell>
             <TableCell as="th">Last Name</TableCell>
-            <TableCell as="th">Username</TableCell>
             <TableCell as="th">Email</TableCell>
+            <TableCell as="th">Cognito Username</TableCell>
           </TableRow>
         </TableHead>
-
         <TableBody>
           {data?.users?.users?.sort((a, b) => a.first_name.localeCompare(b.first_name))?.map((item: User) => {
             return (
@@ -45,8 +44,13 @@ const UsersTable = () => {
                   >{item.first_name}
                 </TableCell>
                 <TableCell>{item.last_name}</TableCell>
-                <TableCell>{item.cognito_id}</TableCell>
                 <TableCell>{item.email}</TableCell>
+                <TableCell
+                  onClick={() => window.open(`https://us-east-1.console.aws.amazon.com/cognito/v2/idp/user-pools/us-east-1_EhL8P9jZQ/user-management/users/details/${item.cognito_id}?region=us-east-1`)}
+                  style={{ cursor: "pointer" }}
+                  >
+                  {item.cognito_id}
+              </TableCell>
               </TableRow>
             );
           })}

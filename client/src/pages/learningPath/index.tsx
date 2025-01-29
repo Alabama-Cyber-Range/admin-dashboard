@@ -8,7 +8,6 @@ import {
     TableHead,
     TableRow,
     Text,
-    Button,
 } from "@aws-amplify/ui-react";
 import { useParams } from 'react-router-dom';
 import { useLearningPath } from "../../hooks/useLearningPath";
@@ -47,24 +46,27 @@ const LearningPath = () => {
           >
             <TableHead>
                 <TableRow>
-                  <TableCell as="th">Module</TableCell>
-                  <TableCell as="th">Description</TableCell>
-                  <TableCell as="th"></TableCell>
+                    <TableCell as="th">Name</TableCell>
+                    <TableCell as="th">Description</TableCell>
+                    <TableCell as="th">CloudShare Training ID</TableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
                 {modules?.labs?.labs?.sort((a, b) => a.name.localeCompare(b.name))?.map((module) => {
                 return (
                     <TableRow key={module.id}>
-                    <TableCell
-                      onClick={() => navigate(`/modules/${module.id}`)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {module.name}
-                    </TableCell>
-                      <TableCell>{module.description}</TableCell>
-                      <TableCell>
-                        <Button>Remove</Button>
+                        <TableCell
+                          onClick={() => navigate(`/modules/${module.id}`)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          {module.name}
+                        </TableCell>
+                        <TableCell>{module.description}</TableCell>
+                        <TableCell
+                            onClick={() => window.open(`https://accelerate.cloudshare.com/training/${module.cloudshare_training_id}`)}
+                            style={{ cursor: "pointer" }}
+                            >
+                            {module.cloudshare_training_id}
                       </TableCell>
                     </TableRow>
                 );

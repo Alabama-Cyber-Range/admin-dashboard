@@ -5,7 +5,6 @@ import {
   TableBody,
   TableHead,
   TableRow,
-  Button,
 } from "@aws-amplify/ui-react";
 
 import { useSchoolLabs } from '../../hooks/useSchoolLabs';
@@ -35,7 +34,8 @@ const ModulesTable = (props: SchoolData) => {
         <TableHead>
           <TableRow>
             <TableCell as="th">Name</TableCell>
-            <TableCell as="th"></TableCell>
+            <TableCell as="th">Description</TableCell>
+            <TableCell as="th">CloudShare Training ID</TableCell>
           </TableRow>
         </TableHead>
 
@@ -48,8 +48,12 @@ const ModulesTable = (props: SchoolData) => {
                   style={{ cursor: "pointer" }}
                   >{item.name}
                 </TableCell>
-                <TableCell>
-                  <Button onClick={() => navigate("/edit-form")}>Edit</Button>
+                <TableCell>{item.description}</TableCell>
+                <TableCell
+                    onClick={() => window.open(`https://accelerate.cloudshare.com/training/${item.cloudshare_training_id}`)}
+                    style={{ cursor: "pointer" }}
+                    >
+                    {item.cloudshare_training_id}
                 </TableCell>
               </TableRow>
             );

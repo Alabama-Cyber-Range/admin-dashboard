@@ -13,7 +13,7 @@ const LearningPaths = () => {
     <>
         <View padding="1rem">
         <Flex justifyContent="space-between">
-                <Heading level={1}>Learning Path</Heading>
+                <Heading level={1}>Learning Paths</Heading>
                 <Button onClick={() => navigate("/add-learning-path")}>Add Learning Path</Button>
             </Flex>
         </View>

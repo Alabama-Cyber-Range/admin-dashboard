@@ -78,8 +78,9 @@ const ModulesTable = () => {
               <TableCell
                   onClick={() => window.open(`https://accelerate.cloudshare.com/training/${lab.cloudshare_training_id}`)}
                   style={{ cursor: "pointer" }}
-                  >{lab.cloudshare_training_id}
-                </TableCell>
+                  >
+                  {lab.cloudshare_training_id}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
