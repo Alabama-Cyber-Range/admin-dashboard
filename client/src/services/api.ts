@@ -27,14 +27,16 @@ import {
   createSchool_lab_associations,
   createLearning_path_lab_associations,
   deleteSchool_lab_associations,
-  deleteLearning_path_lab_associations
+  deleteLearning_path_lab_associations,
+  deleteSchool_user_associations,
 } from '../graphql/mutations';
 import {
   CreateSchool_user_associationsInput,
   CreateSchool_lab_associationsInput,
   CreateLearning_path_lab_associationsInput,
   DeleteSchool_lab_associationsInput,
-  DeleteLearning_path_lab_associationsInput
+  DeleteLearning_path_lab_associationsInput,
+  DeleteSchool_user_associationsInput,
 } from '../API';
 
 const client = generateClient();
@@ -421,6 +423,43 @@ export const get_school_users = async (schoolId: number): Promise<UsersResponse>
   return { users };
 };
 
+export const get_user_schools = async (userId: number): Promise<SchoolsResponse> => {
+  const associationResp = await client.graphql({
+    query: listSchool_user_associations,
+    variables: {
+      filter: {
+        user_id: { eq: userId },
+      },
+    },
+  });
+
+  // Extract items safely
+  const associations = associationResp?.data?.listSchool_user_associations?.items ?? [];
+
+  // 2) For each association, fetch the corresponding lab
+  const schoolPromises = associations.map(async (assoc: any) => {
+    const schoolResp = await client.graphql({
+      query: getSchools,
+      variables: { id: assoc.school_id },
+    });
+
+    // Transform the response data into desired shape
+    const school = schoolResp?.data?.getSchools;
+    return {
+      ...school,
+      id: school?.id?.toString() ?? '',
+      name: school?.name ?? '',  // ensure name is a string
+      created_at: school?.created_at ?? '',  // ensure created_at is a string
+    };
+  });
+
+  // 3) Resolve all lab fetches
+  const schools = await Promise.all(schoolPromises);
+
+  // Return in structure "SchoolsPromise" expects
+  return { schools };
+};
+
 export const associate_user_with_school = async (userId: number, schoolId: number): Promise<void> => {
   const input: CreateSchool_user_associationsInput = {
     user_id: userId,
@@ -429,6 +468,37 @@ export const associate_user_with_school = async (userId: number, schoolId: numbe
 
   await client.graphql({
     query: createSchool_user_associations,
+    variables: { input },
+  });
+};
+
+export const unassociate_user_with_school = async (userId: number, schoolId: number): Promise<void> => {
+  const user = get_user_by_id(userId);
+  const user_id = Number((await user).user.id);
+
+  const associationResp = await client.graphql({
+    query: listSchool_user_associations,
+    variables: {
+      filter: {
+        user_id: { eq: user_id },
+        school_id: { eq: schoolId },
+      },
+    },
+  });
+
+  // Extract items safely
+  const associations = associationResp?.data?.listSchool_user_associations?.items ?? [];
+
+  if (!associations[0]) {
+    throw new Error('No associations found for the given user ID');
+  }
+
+  const input: DeleteSchool_user_associationsInput = {
+    id: associations[0].id,
+  };
+
+  await client.graphql({
+    query: deleteSchool_user_associations,
     variables: { input },
   });
 };
