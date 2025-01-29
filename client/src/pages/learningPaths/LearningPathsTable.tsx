@@ -47,7 +47,7 @@ const LearningPathsTable = () => {
                 </TableCell>
                 <TableCell>{item.description}</TableCell>
                 <TableCell>
-                  <Button onClick={() => navigate("/edit-form")}>Edit</Button>
+                  <Button>Edit</Button>
                 </TableCell>
                 <TableCell>
                   <Button>Delete</Button>

@@ -63,7 +63,6 @@ const ModulesTable = () => {
             <TableCell as="th">Title</TableCell>
             <TableCell as="th">Description</TableCell>
             <TableCell as="th">CloudShare Training ID</TableCell>
-            <TableCell as="th"></TableCell>
           </TableRow>
         </TableHead>
 
@@ -78,9 +77,6 @@ const ModulesTable = () => {
               </TableCell>
               <TableCell>{lab.description}</TableCell>
               <TableCell>{lab.cloudshare_training_id}</TableCell>
-              <TableCell>
-                <Button onClick={() => navigate("/edit-form")}>Edit</Button>
-              </TableCell>
             </TableRow>
           ))}
         </TableBody>
