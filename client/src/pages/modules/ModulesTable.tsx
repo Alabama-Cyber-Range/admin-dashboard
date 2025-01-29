@@ -5,7 +5,6 @@ import {
   TableBody,
   TableHead,
   TableRow,
-  Button,
   useTheme,
   Pagination,
 } from "@aws-amplify/ui-react";
