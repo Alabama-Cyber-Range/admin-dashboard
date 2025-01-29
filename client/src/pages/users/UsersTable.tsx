@@ -4,7 +4,6 @@ import {
   TableBody,
   TableHead,
   TableRow,
-  Button,
   useTheme,
 } from "@aws-amplify/ui-react";
 
@@ -33,7 +32,6 @@ const UsersTable = () => {
             <TableCell as="th">Last Name</TableCell>
             <TableCell as="th">Username</TableCell>
             <TableCell as="th">Email</TableCell>
-            <TableCell as="th"></TableCell>
           </TableRow>
         </TableHead>
 
@@ -49,9 +47,6 @@ const UsersTable = () => {
                 <TableCell>{item.last_name}</TableCell>
                 <TableCell>{item.cognito_id}</TableCell>
                 <TableCell>{item.email}</TableCell>
-                <TableCell>
-                  <Button onClick={() => navigate("/edit-form")}>Edit</Button>
-                </TableCell>
               </TableRow>
             );
           })}
