@@ -7,7 +7,6 @@ import {
   TableRow,
   useTheme,
   Pagination,
-  Link,
 } from "@aws-amplify/ui-react";
 import { useNavigate } from "react-router-dom";
 
@@ -76,9 +75,7 @@ const ModulesTable = () => {
                 {lab.name}
               </TableCell>
               <TableCell>{lab.description}</TableCell>
-              {/* <TableCell>{lab.cloudshare_training_id}</TableCell> */}
               <TableCell
-                  // onClick={() => navigate(`/schools/${item.id}`)}
                   onClick={() => window.open(`https://accelerate.cloudshare.com/training/${lab.cloudshare_training_id}`)}
                   style={{ cursor: "pointer" }}
                   >{lab.cloudshare_training_id}
