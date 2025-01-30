@@ -24,7 +24,7 @@ const SchoolsTable = (props: LabData) => {
   const labId  = props.labId;
   const data = useLabSchools(labId);
     useEffect(() => {}
-    , [data, "labSchools"]);
+    , [data]);
   const navigate = useNavigate();
 
   const queryClient = useQueryClient()
