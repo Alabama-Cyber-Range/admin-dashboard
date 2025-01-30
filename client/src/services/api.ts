@@ -30,7 +30,9 @@ import {
   deleteLearning_path_lab_associations,
   deleteSchool_user_associations,
   createSchools,
-  deleteSchools
+  deleteSchools,
+  createLearning_paths,
+  deleteLearning_paths,
 } from '../graphql/mutations';
 import {
   CreateSchool_user_associationsInput,
@@ -41,6 +43,8 @@ import {
   DeleteSchool_user_associationsInput,
   CreateSchoolsInput,
   DeleteSchoolsInput,
+  CreateLearning_pathsInput,
+  DeleteLearning_pathsInput,
 } from '../API';
 
 const client = generateClient();
@@ -614,6 +618,32 @@ export const delete_school = async (schoolId: number): Promise<void> => {
 
   await client.graphql({
     query: deleteSchools,
+    variables: { input },
+  });
+};
+
+export const create_learning_path = async (name: string, description: string): Promise<void> => {
+  const input: CreateLearning_pathsInput = {
+    name,
+    description,
+  };
+
+  await client.graphql({
+    query: createLearning_paths,
+    variables: { input },
+  });
+};
+
+export const delete_learning_path = async (learningPathId: number): Promise<void> => {
+  const learningPath = get_learning_path(learningPathId);
+  const learning_path_id = Number((await learningPath).learning_path.id);
+
+  const input: DeleteLearning_pathsInput = {
+    id: learning_path_id,
+  };
+
+  await client.graphql({
+    query: deleteLearning_paths,
     variables: { input },
   });
 };

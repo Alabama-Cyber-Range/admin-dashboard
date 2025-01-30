@@ -12,7 +12,7 @@ interface Fields {
 
 interface FormFieldProps {
   formFieldChange: (name: string, value: string) => void;
-  formFieldIsValid: (name: string, valid: boolean) => void;
+  formFieldIsValid: (valid: boolean) => void;
   values: Fields;
 }
 
@@ -27,7 +27,7 @@ const FormFields = (props: FormFieldProps) => {
   const validateTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isEmpty = /^\s*$/.test(e.target.value);
     setTitleHasError(isEmpty);
-    formFieldIsValid(e.target.name, !isEmpty);
+    formFieldIsValid(!isEmpty);
   };
   return (
     <>

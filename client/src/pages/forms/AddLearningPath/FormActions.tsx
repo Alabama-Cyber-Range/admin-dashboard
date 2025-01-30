@@ -12,6 +12,7 @@ const FormActions = (props: FormActionsProps) => {
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     formOnSubmit();
     e.preventDefault();
+    history.back();
   };
 
   return (

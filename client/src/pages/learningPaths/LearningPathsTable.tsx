@@ -12,6 +12,8 @@ import { useLearningPaths } from '../../hooks/useLearningPaths';
 import { LearningPath } from '@admin-dashboard/contracts/LearningPath';
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { delete_learning_path } from "../../services/api"
+import { useQueryClient } from "@tanstack/react-query";
 
 const LearningPathsTable = () => {
   const { tokens } = useTheme();
@@ -19,6 +21,14 @@ const LearningPathsTable = () => {
     useEffect(() => {}
     , [data]);
   const navigate = useNavigate();
+
+  const queryClient = useQueryClient()
+
+  const handleDelete = async (learningPathId: number) => {
+    event?.preventDefault
+    await delete_learning_path(learningPathId);
+    await queryClient.invalidateQueries({ queryKey: ['learningPaths'] })
+  };
   return (
     <>
       <Table
@@ -50,7 +60,10 @@ const LearningPathsTable = () => {
                   <Button>Edit</Button>
                 </TableCell>
                 <TableCell>
-                  <Button>Delete</Button>
+                  <Button
+                      onClick={() => handleDelete(Number(item.id))}>
+                      Delete
+                    </Button>
                 </TableCell>
               </TableRow>
             );

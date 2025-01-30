@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View, Flex, Heading, useTheme } from "@aws-amplify/ui-react";
 import FormFields from "./FormFields";
 import FormActions from "./FormActions";
+import { create_learning_path } from "../../../services/api";
 
 /// mock api request
 
@@ -9,14 +10,6 @@ interface FormData {
   name: string;
   description: string;
 }
-
-const postForm = (data: FormData): Promise<FormData> =>
-  new Promise((resolve, reject) => {
-    if (!data.name) {
-      reject(new Error("Not all information provided"));
-    }
-    setTimeout(() => resolve(data), 750);
-  });
 
 const initialValues = {
   name: "",
@@ -36,11 +29,9 @@ const AddLearningPathForm = () => {
 
     const doPostForm = async (data: FormData): Promise<void> => {
       try {
-      const result: FormData = await postForm(data);
-      console.log(result);
+      create_learning_path(data.name, data.description);
       setIsLoading(false);
       } catch (error) {
-      console.log(error);
       setIsLoading(false);
       }
     };
@@ -55,9 +46,8 @@ const AddLearningPathForm = () => {
     });
   };
 
-  const formFieldIsValid = (name: string, valid: boolean) => {
+  const formFieldIsValid = (valid: boolean) => {
     setIsDisabled(!valid);
-    console.log(name);
   };
 
   return (
