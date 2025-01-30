@@ -17,7 +17,7 @@ const SchoolsTable = () => {
   const { tokens } = useTheme();
   const data = useSchools();
     useEffect(() => {}
-    , [data]);
+    , [data, "schools"]);
   const navigate = useNavigate();
   return (
     <>

@@ -1,5 +1,4 @@
 import { Button } from "@aws-amplify/ui-react";
-import { create_school } from "../../../services/api";
 
 interface FormActionsProps {
   formOnSubmit: () => void;
@@ -8,13 +7,12 @@ interface FormActionsProps {
 }
 
 const FormActions = (props: FormActionsProps) => {
-  // const { formOnSubmit, isLoading, isDisabled } = props;
-  const { formOnSubmit, isLoading = false, isDisabled = false } = props;
-  create_school("Test School");
+  const { formOnSubmit, isLoading, isDisabled } = props;
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     formOnSubmit();
     e.preventDefault();
+    history.back();
   };
 
   return (

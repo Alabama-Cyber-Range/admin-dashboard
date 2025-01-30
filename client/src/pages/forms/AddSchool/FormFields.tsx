@@ -11,7 +11,7 @@ interface Fields {
 
 interface FormFieldProps {
   formFieldChange: (name: string, value: string) => void;
-  formFieldIsValid: (name: string, valid: boolean) => void;
+  formFieldIsValid: (valid: boolean) => void;
   values: Fields;
 }
 
@@ -26,8 +26,9 @@ const FormFields = (props: FormFieldProps) => {
   const validateTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isEmpty = /^\s*$/.test(e.target.value);
     setTitleHasError(isEmpty);
-    formFieldIsValid(e.target.name, !isEmpty);
+    formFieldIsValid(!isEmpty);
   };
+
   return (
     <>
       <Flex direction="column" width="100%">
@@ -39,10 +40,10 @@ const FormFields = (props: FormFieldProps) => {
           }}
           name="name"
           hasError={titleHasError}
-          errorMessage="Please input a Title"
+          errorMessage="Please input a school"
           label={
             <Text>
-              Name
+              School
               <Text as="span" fontSize="0.8rem" color="red">
                 (required)
               </Text>

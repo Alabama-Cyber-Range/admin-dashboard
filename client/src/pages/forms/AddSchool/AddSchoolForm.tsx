@@ -2,20 +2,11 @@ import { useState } from "react";
 import { View, Flex, Heading, useTheme } from "@aws-amplify/ui-react";
 import FormFields from "./FormFields";
 import FormActions from "./FormActions";
-
-/// mock api request
+import { create_school } from "../../../services/api";
 
 interface FormData {
   name: string;
 }
-
-const postForm = (data: FormData): Promise<FormData> =>
-  new Promise((resolve, reject) => {
-    if (!data.name) {
-      reject(new Error("Not all information provided"));
-    }
-    setTimeout(() => resolve(data), 750);
-  });
 
 const initialValues = {
   name: "",
@@ -34,11 +25,9 @@ const AddSchoolForm = () => {
 
     const doPostForm = async (data: FormData): Promise<void> => {
       try {
-      const result: FormData = await postForm(data);
-      console.log(result);
+      create_school(data.name);
       setIsLoading(false);
       } catch (error) {
-      console.log(error);
       setIsLoading(false);
       }
     };
@@ -53,9 +42,8 @@ const AddSchoolForm = () => {
     });
   };
 
-  const formFieldIsValid = (name: string, valid: boolean) => {
+  const formFieldIsValid = (valid: boolean) => {
     setIsDisabled(!valid);
-    console.log(name);
   };
 
   return (
