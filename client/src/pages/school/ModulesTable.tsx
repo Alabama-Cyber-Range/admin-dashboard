@@ -13,6 +13,7 @@ import { Lab } from '@admin-dashboard/contracts/Lab';
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { unassociate_lab_with_school } from "../../services/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface SchoolData {
   schoolId: number;
@@ -25,6 +26,14 @@ const ModulesTable = (props: SchoolData) => {
     useEffect(() => {}
     , [data, "schoolLabs"]);
   const navigate = useNavigate();
+
+  const queryClient = useQueryClient()
+
+  const handleDelete = async (labId: number) => {
+    event?.preventDefault
+    await unassociate_lab_with_school(labId, schoolId);
+    await queryClient.invalidateQueries({ queryKey: ['schoolLabs', schoolId] })
+  };
   return (
     <>
       <Table
@@ -59,10 +68,10 @@ const ModulesTable = (props: SchoolData) => {
                     {item.cloudshare_training_id}
                 </TableCell>
                 <TableCell>
-                  <Button
-                    onClick={() => unassociate_lab_with_school(Number(item.id), schoolId)}
-                    >Unassociate
-                  </Button>
+                <Button
+                  onClick={() => handleDelete(Number(item.id))}
+                  >Unassociate
+                </Button>
                 </TableCell>
               </TableRow>
             );

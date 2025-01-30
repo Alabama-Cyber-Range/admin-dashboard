@@ -30,6 +30,7 @@ import {
   deleteLearning_path_lab_associations,
   deleteSchool_user_associations,
   createSchools,
+  deleteSchools
 } from '../graphql/mutations';
 import {
   CreateSchool_user_associationsInput,
@@ -39,6 +40,7 @@ import {
   DeleteLearning_path_lab_associationsInput,
   DeleteSchool_user_associationsInput,
   CreateSchoolsInput,
+  DeleteSchoolsInput,
 } from '../API';
 
 const client = generateClient();
@@ -598,6 +600,20 @@ export const create_school = async (name: string): Promise<void> => {
 
   await client.graphql({
     query: createSchools,
+    variables: { input },
+  });
+};
+
+export const delete_school = async (schoolId: number): Promise<void> => {
+  const school = get_school(schoolId);
+  const school_id = Number((await school).school.id);
+
+  const input: DeleteSchoolsInput = {
+    id: school_id,
+  };
+
+  await client.graphql({
+    query: deleteSchools,
     variables: { input },
   });
 };

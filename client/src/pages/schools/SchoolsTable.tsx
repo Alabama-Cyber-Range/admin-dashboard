@@ -12,13 +12,23 @@ import { useSchools } from "../../hooks/useSchools";
 import { School } from '@admin-dashboard/contracts/School';
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { delete_school } from "../../services/api"
+import { useQueryClient } from "@tanstack/react-query";
 
 const SchoolsTable = () => {
   const { tokens } = useTheme();
   const data = useSchools();
     useEffect(() => {}
-    , [data, "schools"]);
+    , [data]);
   const navigate = useNavigate();
+
+  const queryClient = useQueryClient()
+
+  const handleDelete = async (schoolId: number) => {
+    event?.preventDefault
+    await delete_school(schoolId);
+    await queryClient.invalidateQueries({ queryKey: ['schools'] })
+  };
   return (
     <>
       <Table
@@ -48,7 +58,10 @@ const SchoolsTable = () => {
                   <Button>Edit</Button>
                 </TableCell>
                 <TableCell>
-                  <Button>Delete</Button>
+                  <Button
+                    onClick={() => handleDelete(Number(item.id))}>
+                    Delete
+                  </Button>
                 </TableCell>
               </TableRow>
             );
