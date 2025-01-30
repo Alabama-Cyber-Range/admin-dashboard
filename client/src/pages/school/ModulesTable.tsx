@@ -5,12 +5,14 @@ import {
   TableBody,
   TableHead,
   TableRow,
+  Button,
 } from "@aws-amplify/ui-react";
 
 import { useSchoolLabs } from '../../hooks/useSchoolLabs';
 import { Lab } from '@admin-dashboard/contracts/Lab';
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { unassociate_lab_with_school } from "../../services/api";
 
 export interface SchoolData {
   schoolId: number;
@@ -21,7 +23,7 @@ const ModulesTable = (props: SchoolData) => {
   const schoolId  = props.schoolId;
   const data = useSchoolLabs(schoolId);
     useEffect(() => {}
-    , [data]);
+    , [data, "schoolLabs"]);
   const navigate = useNavigate();
   return (
     <>
@@ -36,6 +38,7 @@ const ModulesTable = (props: SchoolData) => {
             <TableCell as="th">Name</TableCell>
             <TableCell as="th">Description</TableCell>
             <TableCell as="th">CloudShare Training ID</TableCell>
+            <TableCell as="th"></TableCell>
           </TableRow>
         </TableHead>
 
@@ -54,6 +57,12 @@ const ModulesTable = (props: SchoolData) => {
                     style={{ cursor: "pointer" }}
                     >
                     {item.cloudshare_training_id}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    onClick={() => unassociate_lab_with_school(Number(item.id), schoolId)}
+                    >Unassociate
+                  </Button>
                 </TableCell>
               </TableRow>
             );

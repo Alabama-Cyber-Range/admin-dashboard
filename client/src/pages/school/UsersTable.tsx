@@ -5,12 +5,15 @@ import {
     TableBody,
     TableHead,
     TableRow,
+    Button,
   } from "@aws-amplify/ui-react";
 
   import { useSchoolUsers } from '../../hooks/useSchoolUsers';
   import { User } from '@admin-dashboard/contracts/User';
   import { useEffect } from "react";
   import { useNavigate } from "react-router-dom";
+  import { unassociate_user_with_school } from "../../services/api";
+  import { useQueryClient } from "@tanstack/react-query";
 
   export interface SchoolData {
     schoolId: number;
@@ -21,8 +24,17 @@ import {
     const schoolId  = props.schoolId;
     const data = useSchoolUsers(schoolId);
       useEffect(() => {}
-      , [data]);
+      , [data, "schoolUsers"]);
     const navigate = useNavigate();
+
+    const queryClient = useQueryClient()
+
+    const handleDelete = async (userId: number) => {
+      event?.preventDefault
+      await unassociate_user_with_school(userId, schoolId);
+      await queryClient.invalidateQueries({ queryKey: ['schoolUsers', schoolId] })
+    };
+
     return (
       <>
         <Table
@@ -37,6 +49,7 @@ import {
               <TableCell as="th">Last Name</TableCell>
               <TableCell as="th">Email</TableCell>
               <TableCell as="th">Cognito Username</TableCell>
+              <TableCell as="th"></TableCell>
             </TableRow>
           </TableHead>
 
@@ -56,6 +69,12 @@ import {
                   style={{ cursor: "pointer" }}
                   >
                   {item.cognito_id}
+              </TableCell>
+              <TableCell>
+                <Button
+                  onClick={() => handleDelete(Number(item.id))}
+                  >Unassociate
+                </Button>
               </TableCell>
                 </TableRow>
               );

@@ -12,10 +12,14 @@ import { useNavigate } from "react-router-dom";
 
 import { useLabs } from "../../hooks/useLabs";
 import { Lab } from "@admin-dashboard/contracts/Lab";
+import { useEffect } from "react";
 
 const ModulesTable = () => {
   const { tokens } = useTheme();
+  // const data = useLabs();
   const data = useLabs();
+    useEffect(() => {}
+    , [data, "labs"]);
   const navigate = useNavigate();
 
   // Keep these hooks outside of any condition
