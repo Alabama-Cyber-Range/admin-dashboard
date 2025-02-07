@@ -72,52 +72,6 @@ Amplify.configure({
 
 const queryClient = new QueryClient();
 
-function ProtectedRoute({ children }: { children: ReactNode }) {
-  const { authStatus } = useAuthenticator();
-  const navigate = useNavigate();
-  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null); // Add state for authorization
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
-
-  useEffect(() => { // Use useEffect to call checkAuthAndGroup
-    const check = async () => {
-        const result = await checkAuthAndGroup();
-        setIsAuthorized(result);
-        setIsLoading(false);
-    }
-    check();
-  }, [authStatus]); // Run effect when authState changes
-
-  const checkAuthAndGroup = async () => {
-    try {
-    const authSession = await fetchAuthSession();
-    const groups = authSession.tokens?.idToken?.payload['cognito:groups'] as string[];
-      const allowedGroups = ['admin'];
-
-      if (!groups || !groups.some(group => allowedGroups.includes(group))) {
-        signOut();
-        navigate('/');
-        return false;
-      }
-      return true;
-    } catch (error) {
-      navigate('/');
-      return false;
-    }
-  };
-
-  if (isLoading) { // Show loading indicator while checking
-    return <div>Loading...</div>; // Or a more sophisticated loading component
-  }
-
-  if (authStatus === 'authenticated' && isAuthorized === true) { // Check both authState and isAuthorized
-    return <>{children}</>;
-  } else if (authStatus === 'authenticated' && isAuthorized === null){
-      return null;
-  } else {
-    return null; // Don't render anything if not authenticated or not authorized
-  }
-}
-
 function ProtectedLayout({ children }: { children: ReactNode }) {
   const { authStatus } = useAuthenticator();
   const navigate = useNavigate();
@@ -199,7 +153,7 @@ export default function App() {
               <Route path="learning-paths" element={<ProtectedLayout><LearningPaths /></ProtectedLayout>}/>
               <Route path="schools" element={<ProtectedLayout><Schools /></ProtectedLayout>}/>
 
-              <Route path="modules/:moduleId" element={<ProtectedRoute><Module /></ProtectedRoute>}/>
+              <Route path="modules/:moduleId" element={<ProtectedLayout><Module /></ProtectedLayout>}/>
               <Route path="users/:userId" element={<ProtectedLayout><User /></ProtectedLayout>}/>
               <Route path="learning-paths/:pathId" element={<ProtectedLayout><LearningPath /></ProtectedLayout>}/>
               <Route path="schools/:schoolId" element={<ProtectedLayout><School /></ProtectedLayout>}/>
