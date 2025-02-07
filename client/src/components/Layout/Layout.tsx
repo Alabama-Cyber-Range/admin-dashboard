@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Outlet } from "react-router-dom";
 import { baseConfig } from "../../config";
 import SideBar from "../SideBar";
@@ -11,7 +11,7 @@ export interface LayoutProps {
   children?: React.ReactNode;
 }
 
-const Layout = () => {
+const Layout = ({ children }: { children: ReactNode}) => {
   const { tokens } = useTheme();
   return (
     <div className="layout-container" style={{ background: tokens.colors.background.tertiary.value }}>
@@ -23,6 +23,7 @@ const Layout = () => {
           the child routes we defined above. */}
       <div className="page-container">
         <Outlet />
+        {children}
       </div>
       {baseConfig.footer ? <Footer /> : <></>}
     </div>

@@ -77,11 +77,13 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   const { authStatus } = useAuthenticator();
   const navigate = useNavigate();
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null); // Add state for authorization
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   useEffect(() => { // Use useEffect to call checkAuthAndGroup
     const check = async () => {
         const result = await checkAuthAndGroup();
         setIsAuthorized(result);
+        setIsLoading(false);
     }
     check();
   }, [authStatus]); // Run effect when authState changes
@@ -104,6 +106,10 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
     }
   };
 
+  if (isLoading) { // Show loading indicator while checking
+    return <div>Loading...</div>; // Or a more sophisticated loading component
+  }
+
   if (authStatus === 'authenticated' && isAuthorized === true) { // Check both authState and isAuthorized
     return <>{children}</>;
   } else if (authStatus === 'authenticated' && isAuthorized === null){
@@ -113,12 +119,47 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   }
 }
 
-async function authLoader() {
-  try {
-    await getCurrentUser();
-    return redirect('/');
-  } catch (error) {
-    return null;
+function ProtectedLayout({ children }: { children: ReactNode }) {
+  const { authStatus } = useAuthenticator();
+  const navigate = useNavigate();
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const check = async () => {
+      const result = await checkAuthAndGroup();
+      setIsAuthorized(result);
+      setIsLoading(false);
+    };
+    check();
+  }, [authStatus]);
+
+  const checkAuthAndGroup = async () => {
+    try {
+      const authSession = await fetchAuthSession();
+      const groups = authSession.tokens?.idToken?.payload['cognito:groups'] as string[];
+      const allowedGroups = ['admin'];
+
+      if (!groups ||!groups.some(group => allowedGroups.includes(group))) {
+        signOut(); // Make sure signOut is defined (even if it's a stub)
+        navigate('/');
+        return false;
+      }
+      return true;
+    } catch (error) {
+      navigate('/');
+      return false;
+    }
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (authStatus === 'authenticated' && isAuthorized === true) {
+    return <Layout>{children}</Layout>; // Only render Layout when authorized
+  } else {
+    return null; // Don't render Layout if not authenticated or authorized
   }
 }
 
@@ -142,45 +183,29 @@ export default function App() {
           >
           <AuthProvider>
           <div>
-            {/* Routes nest inside one another. Nested route paths build upon
-                parent route paths, and nested route elements render inside
-                parent route elements. See the note about <Outlet> below. */}
             <Routes>
-              <Route path="/" element={<Layout />} loader={authLoader}>
+              <Route path="/" element={<ProtectedLayout><Dashboard /></ProtectedLayout>}/>
 
-                {/* <Route index element={<Dashboard />} loader={protectedLoader} /> */}
-                <Route index element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  } />
-{/*
-                <Route path="forms" element={<Forms />} loader={protectedLoader} />
-                <Route path="edit-form" element={<EditForm />} loader={protectedLoader} />
-                <Route path="add-school" element={<AddSchoolForm />} loader={protectedLoader} />
-                <Route path="add-learning-path" element={<AddLearningPathForm />} loader={protectedLoader} />
-                <Route path="update-user-school/:userId" element={<UpdateUserSchoolForm />} loader={protectedLoader} />
-                <Route path="update-module-school/:moduleId" element={<UpdateLabSchoolForm />} loader={protectedLoader} />
-                <Route path="update-module-learning-path/:moduleId" element={<UpdateLabLearningPathForm />} loader={protectedLoader} />
+              <Route path="forms" element={<ProtectedLayout><Forms /></ProtectedLayout>}/>
+              <Route path="edit-form" element={<ProtectedLayout><EditForm /></ProtectedLayout>}/>
+              <Route path="add-school" element={<ProtectedLayout><AddSchoolForm /></ProtectedLayout>}/>
+              <Route path="add-learning-path" element={<ProtectedLayout><AddLearningPathForm /></ProtectedLayout>}/>
+              <Route path="update-user-school/:userId" element={<ProtectedLayout><UpdateUserSchoolForm /></ProtectedLayout>}/>
+              <Route path="update-module-school/:moduleId" element={<ProtectedLayout><UpdateLabSchoolForm /></ProtectedLayout>}/>
+              <Route path="update-module-learning-path/:moduleId" element={<ProtectedLayout><UpdateLabLearningPathForm /></ProtectedLayout>}/>
 
-                <Route path="profile" element={<Profile />} loader={protectedLoader} />
-                <Route path="modules" element={<Modules />} loader={protectedLoader} />
-                <Route path="users" element={<Users />} loader={protectedLoader} />
-                <Route path="learning-paths" element={<LearningPaths />} loader={protectedLoader} />
-                <Route path="schools" element={<Schools />} loader={protectedLoader} />
+              <Route path="profile" element={<ProtectedLayout><Profile /></ProtectedLayout>}/>
+              <Route path="modules" element={<ProtectedLayout><Modules /></ProtectedLayout>}/>
+              <Route path="users" element={<ProtectedLayout><Users /></ProtectedLayout>}/>
+              <Route path="learning-paths" element={<ProtectedLayout><LearningPaths /></ProtectedLayout>}/>
+              <Route path="schools" element={<ProtectedLayout><Schools /></ProtectedLayout>}/>
 
-                <Route path="modules/:moduleId" element={<Module />} loader={protectedLoader} />
-                <Route path="users/:userId" element={<User />} loader={protectedLoader} />
-                <Route path="learning-paths/:pathId" element={<LearningPath />} loader={protectedLoader} />
-                <Route path="schools/:schoolId" element={<School />} loader={protectedLoader} /> */}
+              <Route path="modules/:moduleId" element={<ProtectedLayout><Module /></ProtectedLayout>}/>
+              <Route path="users/:userId" element={<ProtectedLayout><User /></ProtectedLayout>}/>
+              <Route path="learning-paths/:pathId" element={<ProtectedLayout><LearningPath /></ProtectedLayout>}/>
+              <Route path="schools/:schoolId" element={<ProtectedLayout><School /></ProtectedLayout>}/>
 
-                {/* <Route path="*" element={<NoMatch />} loader={protectedLoader} /> */}
-                <Route path="*" element={
-                    <ProtectedRoute>
-                      <NoMatch />
-                    </ProtectedRoute>
-                  } />
-              </Route>
+              <Route path="*" element={<ProtectedLayout><NoMatch /></ProtectedLayout>} />
             </Routes>
           </div>
           </AuthProvider>
@@ -203,4 +228,3 @@ function NoMatch() {
 function signOut() {
   throw new Error("Function not implemented.");
 }
-
