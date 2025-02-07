@@ -1,4 +1,5 @@
-import { Routes, Route, Link, redirect } from "react-router-dom";
+import { Routes, Route, Link, redirect, useNavigate } from "react-router-dom";
+import { ReactNode, useEffect, useState } from 'react';
 import "@aws-amplify/ui-react/styles.css";
 import "./App.css";
 import {
@@ -32,6 +33,8 @@ import Module from "./pages/module";
 import { Amplify } from 'aws-amplify';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { AuthProvider } from './context/authContext';
+import { fetchAuthSession } from "aws-amplify/auth";
+import { useAuthenticator } from "@aws-amplify/ui-react";
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -70,12 +73,43 @@ Amplify.configure({
 
 const queryClient = new QueryClient();
 
-async function protectedLoader() {
-  try {
-    await getCurrentUser();
-    return null;
-  } catch (error) {
-    return redirect('/');
+function ProtectedRoute({ children }: { children: ReactNode }) {
+  const { authStatus } = useAuthenticator();
+  const navigate = useNavigate();
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null); // Add state for authorization
+
+  useEffect(() => { // Use useEffect to call checkAuthAndGroup
+    const check = async () => {
+        const result = await checkAuthAndGroup();
+        setIsAuthorized(result);
+    }
+    check();
+  }, [authStatus]); // Run effect when authState changes
+
+  const checkAuthAndGroup = async () => {
+    try {
+    const authSession = await fetchAuthSession();
+    const groups = authSession.tokens?.idToken?.payload['cognito:groups'] as string[];
+      const allowedGroups = ['admin'];
+
+      if (!groups || !groups.some(group => allowedGroups.includes(group))) {
+        signOut();
+        navigate('/');
+        return false;
+      }
+      return true;
+    } catch (error) {
+      navigate('/');
+      return false;
+    }
+  };
+
+  if (authStatus === 'authenticated' && isAuthorized === true) { // Check both authState and isAuthorized
+    return <>{children}</>;
+  } else if (authStatus === 'authenticated' && isAuthorized === null){
+      return null;
+  } else {
+    return null; // Don't render anything if not authenticated or not authorized
   }
 }
 
@@ -113,7 +147,14 @@ export default function App() {
                 parent route elements. See the note about <Outlet> below. */}
             <Routes>
               <Route path="/" element={<Layout />} loader={authLoader}>
-                <Route index element={<Dashboard />} loader={protectedLoader} />
+
+                {/* <Route index element={<Dashboard />} loader={protectedLoader} /> */}
+                <Route index element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } />
+{/*
                 <Route path="forms" element={<Forms />} loader={protectedLoader} />
                 <Route path="edit-form" element={<EditForm />} loader={protectedLoader} />
                 <Route path="add-school" element={<AddSchoolForm />} loader={protectedLoader} />
@@ -131,9 +172,14 @@ export default function App() {
                 <Route path="modules/:moduleId" element={<Module />} loader={protectedLoader} />
                 <Route path="users/:userId" element={<User />} loader={protectedLoader} />
                 <Route path="learning-paths/:pathId" element={<LearningPath />} loader={protectedLoader} />
-                <Route path="schools/:schoolId" element={<School />} loader={protectedLoader} />
+                <Route path="schools/:schoolId" element={<School />} loader={protectedLoader} /> */}
 
-                <Route path="*" element={<NoMatch />} loader={protectedLoader} />
+                {/* <Route path="*" element={<NoMatch />} loader={protectedLoader} /> */}
+                <Route path="*" element={
+                    <ProtectedRoute>
+                      <NoMatch />
+                    </ProtectedRoute>
+                  } />
               </Route>
             </Routes>
           </div>
@@ -154,3 +200,7 @@ function NoMatch() {
     </div>
   );
 }
+function signOut() {
+  throw new Error("Function not implemented.");
+}
+
