@@ -37,6 +37,8 @@ import { useAuthenticator } from "@aws-amplify/ui-react";
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import { signOut } from 'aws-amplify/auth';
+
 Amplify.configure({
   Auth: {
     Cognito: {
@@ -177,7 +179,4 @@ function NoMatch() {
       </p>
     </div>
   );
-}
-function signOut() {
-  throw new Error("Function not implemented.");
 }
