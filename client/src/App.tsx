@@ -1,4 +1,4 @@
-import { Routes, Route, Link, redirect, useNavigate } from "react-router-dom";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { ReactNode, useEffect, useState } from 'react';
 import "@aws-amplify/ui-react/styles.css";
 import "./App.css";
@@ -31,7 +31,6 @@ import User from "./pages/user";
 import Module from "./pages/module";
 
 import { Amplify } from 'aws-amplify';
-import { getCurrentUser } from 'aws-amplify/auth';
 import { AuthProvider } from './context/authContext';
 import { fetchAuthSession } from "aws-amplify/auth";
 import { useAuthenticator } from "@aws-amplify/ui-react";
@@ -200,7 +199,7 @@ export default function App() {
               <Route path="learning-paths" element={<ProtectedLayout><LearningPaths /></ProtectedLayout>}/>
               <Route path="schools" element={<ProtectedLayout><Schools /></ProtectedLayout>}/>
 
-              <Route path="modules/:moduleId" element={<ProtectedLayout><Module /></ProtectedLayout>}/>
+              <Route path="modules/:moduleId" element={<ProtectedRoute><Module /></ProtectedRoute>}/>
               <Route path="users/:userId" element={<ProtectedLayout><User /></ProtectedLayout>}/>
               <Route path="learning-paths/:pathId" element={<ProtectedLayout><LearningPath /></ProtectedLayout>}/>
               <Route path="schools/:schoolId" element={<ProtectedLayout><School /></ProtectedLayout>}/>
